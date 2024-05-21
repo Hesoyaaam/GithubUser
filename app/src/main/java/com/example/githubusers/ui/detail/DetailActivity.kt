@@ -10,7 +10,9 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.githubusers.R
 import com.example.githubusers.data.response.DetailUserResponse
+import com.example.githubusers.database.FavoriteUser
 import com.example.githubusers.databinding.ActivityDetailBinding
+import com.example.githubusers.helper.ViewModelFactory
 import com.example.githubusers.ui.fragment.SectionPagerAdapater
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -18,10 +20,14 @@ import com.google.android.material.tabs.TabLayoutMediator
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailBinding
-    private val detailViewModel by viewModels<DetailViewModel>()
+    private val detailViewModel by viewModels<DetailViewModel> {
+        ViewModelFactory.getInstance(application)
+    }
 
     companion object {
         const val EXTRA_NAME = "username"
+        const val EXTRA_AVATAR = "extra_avatar"
+
         @StringRes
         private val TAB_TITLES = intArrayOf(
             R.string.text1,
@@ -42,6 +48,9 @@ class DetailActivity : AppCompatActivity() {
             tabs.text = resources.getString(TAB_TITLES[position])
         }.attach()
         supportActionBar?.hide()
+        val avatarUrl = intent.getStringExtra(EXTRA_AVATAR)
+        val username = intent.getStringExtra(EXTRA_NAME)
+        sectionsPagerAdapter.username = username.toString()
 
         detailViewModel.detailUser.observe(this) { detailUser ->
             setDetailUser(detailUser)
@@ -49,22 +58,36 @@ class DetailActivity : AppCompatActivity() {
         detailViewModel.isLoading.observe(this) {
             showLoading(it)
         }
-        val username = intent.getStringExtra(EXTRA_NAME)
-        sectionsPagerAdapter.username = username.toString()
-
         if (username != null) {
             detailViewModel.getDetailUser(username)
         }
 
-    }
+        var isFavorite = false
+        detailViewModel.checkFavorite(username).observe(this) { favoriteUser ->
+            if (favoriteUser == null) {
+                binding.btnFavorite.setImageResource(R.drawable.baseline_favorite_border_24)
+                isFavorite = false
+            } else {
+                binding.btnFavorite.setImageResource(R.drawable.baseline_favorite_24)
+                isFavorite = true
+            }
+        }
 
-    private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.INVISIBLE
+        binding.btnFavorite.setOnClickListener {
+            isFavorite = !isFavorite
+            if (isFavorite) {
+                username?.let {
+                    detailViewModel.addFavorite(it, avatarUrl)
+                }
+            } else {
+                username?.let {
+                    detailViewModel.deleteFavorite(FavoriteUser(it, it))
+                }
+            }
         }
     }
+
+    private fun showLoading(state: Boolean) { binding.progressBar.visibility = if (state) View.VISIBLE else View.GONE }
 
     private fun setDetailUser(user: DetailUserResponse) {
         binding.tvName.text = user.login
@@ -75,5 +98,4 @@ class DetailActivity : AppCompatActivity() {
         binding.tvFollowers.text = "${user.followers} Followers"
         binding.tvFollowing.text = "${user.following} Following"
     }
-
 }

@@ -34,7 +34,7 @@ class UserAdapter: ListAdapter<ItemsItem, UserAdapter.ViewHolder>(DIFF_CALLBACK)
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra("username", item.login)
+            intent.putExtra(DetailActivity.EXTRA_NAME, item.login)
             context.startActivity(intent)
         }
     }

@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">GithubUsers</string>
+    <string name="username">Nama User</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text1">Followers</string>
+    <string name="text2">Following</string>
+    <string name="tv_username">Username</string>
+    <string name="tv_test_data">data</string>
     <string name="searchbar_hint">Cari data</string>
+    <string name="favorite">Fovorite</string>
+    <string name="Theme">Theme</string>
+    <string name="setting">Setting</string>
+    <string name="dark_mode">Dark Mode</string>
 </resources>

@@ -7,5 +7,9 @@
     <string name="tv_username">Username</string>
     <string name="tv_test_data">data</string>
     <string name="searchbar_hint">Cari data</string>
+    <string name="favorite">Fovorite</string>
+    <string name="Theme">Theme</string>
+    <string name="setting">Setting</string>
+    <string name="dark_mode">Dark Mode</string>
 
 </resources>

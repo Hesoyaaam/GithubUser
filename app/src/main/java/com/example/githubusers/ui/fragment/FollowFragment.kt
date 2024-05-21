@@ -8,13 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubusers.databinding.FragmentFollowBinding
-import com.example.githubusers.ui.detail.DetailViewModel
 import com.example.githubusers.ui.main.UserAdapter
 
 class FollowFragment : Fragment() {
 
     private lateinit var binding: FragmentFollowBinding
-    private val detailViewModel by viewModels<DetailViewModel>()
+    private val followViewModel by viewModels<FollowViewModel>()
     private var position: Int = 0
     private var username: String? = null
     private lateinit var adapter: UserAdapter
@@ -44,30 +43,24 @@ class FollowFragment : Fragment() {
             adapter = this@FollowFragment.adapter
         }
 
-        detailViewModel.isLoading.observe(viewLifecycleOwner) {
+        followViewModel.isLoading.observe(viewLifecycleOwner) {
             showLoading(it)
         }
 
         if (position == 1) {
-            detailViewModel.getFollowers(username.toString())
-            detailViewModel.listfollowers.observe(viewLifecycleOwner) { followers ->
+            followViewModel.getFollowers(username.toString())
+            followViewModel.listfollowers.observe(viewLifecycleOwner) { followers ->
                 adapter.submitList(followers)
             }
         }
         else {
-            detailViewModel.getFollowing(username.toString())
-            detailViewModel.listfollowing.observe(viewLifecycleOwner) { following ->
+            followViewModel.getFollowing(username.toString())
+            followViewModel.listfollowing.observe(viewLifecycleOwner) { following ->
                 adapter.submitList(following)
 
             }
         }
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
-        }
-    }
+    private fun showLoading(state: Boolean) { binding.progressBar.visibility = if (state) View.VISIBLE else View.GONE }
 }
